@@ -26,8 +26,41 @@ const clearActiveButtons = () => {
   });
 };
 
+// <section id="spinner" class="text-center my-10 hidden">
+// <span class="loading loading-bars loading-xl "></span>
+// </section>
+
+const manageSpinner = (show) => {
+  const spinner = document.getElementById("spinner");
+  const wordsContainer = document.getElementById("word-container");
+  if (show) {
+    spinner.classList.remove("hidden");
+    wordsContainer.classList.add("hidden");
+  } else {
+    spinner.classList.add("hidden");
+    wordsContainer.classList.remove("hidden");
+  }
+};
+
+/* <section id="spinner-2" class="text-center my-10 hidden">
+        <span class="loading loading-bars loading-xl "></span>
+      </section> */
+
+// const modalSpinner = (show) => {
+//   const modal = document.getElementById("modal-container");
+//   const spinner = document.getElementById("spinner-2");
+//   if (show) {
+//     spinner.classList.remove("hidden");
+//     modal.classList.add("hidden");
+//   } else {
+//     spinner.classList.add("hidden");
+//     modal.classList.remove("hidden");
+//   }
+// };
+
 // ! Load Words form API
 const loadWords = (id) => {
+  manageSpinner(true);
   const url = `https://openapi.programming-hero.com/api/level/${id}`;
   // console.log(url);
   fetch(url)
@@ -52,7 +85,7 @@ const displayWords = (words) => {
         <h1 class="font-bold text-xl mt-10">নেক্সট Lesson এ যান</h1>
       </div>
   `;
-
+    manageSpinner(false);
     return;
   }
   words.forEach((word) => {
@@ -64,11 +97,15 @@ const displayWords = (words) => {
       word.pronunciation ? word.pronunciation : "উচ্চারণ পাওয়া যায়নি"
     }</p>
                 <div class="flex items-center justify-between gap-5 mt-10 mx-5 text-xl">
-                    <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
+                    <button onclick="loadWordDetails(${
+                      word.id
+                    })" class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
                       <i class="fa-solid fa-circle-info"></i>
                       <span class="sr-only">More info</span>
                     </button>
-                    <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
+                    <button onclick="pronounceWord('${
+                      word.word
+                    }')" class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
                       <i class="fa-solid fa-volume-high"></i>
                       <span class="sr-only">Play pronunciation</span>
                     </button>
@@ -76,6 +113,58 @@ const displayWords = (words) => {
             </div>`;
     wordsContainer.appendChild(wordCard);
   });
+  manageSpinner(false);
 };
 
+// ! Load Word Details from API
+const loadWordDetails = async (id) => {
+  // modalSpinner(true);
+  const url = `https://openapi.programming-hero.com/api/word/${id}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  showWordDetails(data.data);
+};
+
+// ! Show Word Details in Modal
+const showWordDetails = (words) => {
+  const modalBox = document.getElementById("modal-container");
+  modalBox.innerHTML = `
+                <div class="rounded-2xl border border-sky-500 bg-white p-6 md:p-8 shadow-sm">
+                  <div class="mb-5">
+                      <h2 class="text-2xl font-bold">${
+                        words.word
+                      } (<i class="fa-solid fa-microphone-lines"></i> : ${words.pronunciation}) </h2>
+                  </div>
+                  <div class="mb-5">
+                      <h2 class=" font-bold">Meaning</h2>
+                      <p>${words.meaning}</p>
+                  </div>
+                  <div class="mb-5">
+                      <h2 class=" font-bold">Example</h2>
+                      <p>${words.sentence}</p>
+                  </div class="mb-5">
+                  <div>
+                      <h2 class=" font-bold mb-2">Synonyms</h2>
+                      <div class="">
+                          ${createElement(words.synonyms)}
+                      </div>
+                  </div>
+                </div>
+  `;
+  document.getElementById("my_modal_5").showModal();
+  // modalSpinner(false);
+};
+
+// ! Create Elements
+const createElement = (arr) => {
+  const elements = arr.map((item) => `<span class="btn btn-primary mr-5">${item}</span>`);
+  return elements.join("");
+};
+
+// ! Pronounce Word
+function pronounceWord(word) {
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-EN"; // English
+  window.speechSynthesis.speak(utterance);
+}
 loadLessons();
