@@ -5,3 +5,7 @@
 .font-hind-siliguri {
   font-family: "Hind Siliguri", sans-serif;
 }
+.btn-active {
+  background-color: #422adf;
+  color: white;
+}

@@ -1,30 +1,46 @@
+// ! Load Lessons form API
 const loadLessons = () => {
   fetch("https://openapi.programming-hero.com/api/levels/all")
     .then((res) => res.json())
     .then((json) => displayLesson(json.data));
 };
 
+// ! Display Lessons
 const displayLesson = (lessons) => {
   // console.log(lessons);
   const lessonsContainer = document.getElementById("lessons-container");
   lessonsContainer.innerHTML = "";
   lessons.forEach((lesson) => {
     const lessonDiv = document.createElement("div");
-    lessonDiv.innerHTML = `<button onclick="loadWords(${lesson.level_no})" class=" btn btn-outline btn-primary"
+    lessonDiv.innerHTML = `<button id="btn-lesson-${lesson.level_no}" onclick="loadWords(${lesson.level_no})" class="btn-lesson btn btn-outline btn-primary"
                 ><i class="fa-solid fa-book-open"></i>Lesson - ${lesson.level_no}
                 </button>`;
     lessonsContainer.appendChild(lessonDiv);
   });
 };
 
+const clearActiveButtons = () => {
+  const buttons = document.querySelectorAll(".btn-lesson");
+  buttons.forEach((button) => {
+    button.classList.remove("btn-active");
+  });
+};
+
+// ! Load Words form API
 const loadWords = (id) => {
   const url = `https://openapi.programming-hero.com/api/level/${id}`;
   // console.log(url);
   fetch(url)
     .then((res) => res.json())
-    .then((json) => displayWords(json.data));
+    .then((json) => {
+      clearActiveButtons();
+      const btnLesson = document.getElementById(`btn-lesson-${id}`);
+      btnLesson.classList.add("btn-active");
+      displayWords(json.data);
+    });
 };
 
+// ! Display Words
 const displayWords = (words) => {
   console.log(words);
   const wordsContainer = document.getElementById("word-container");
