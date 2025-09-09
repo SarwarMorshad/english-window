@@ -29,22 +29,24 @@ const displayWords = (words) => {
   console.log(words);
   const wordsContainer = document.getElementById("word-container");
   wordsContainer.innerHTML = "";
-  //   if (!words || words.length === 0) {
-  //     wordsContainer.innerHTML = `<div class="flex flex-col justify-center text-center w-full mx-auto">
-  //       <p class="text-center"><i class="fa-solid fa-triangle-exclamation text-2xl"></i></p>
-  //       <p>এই Lesson এ এখনো কোন Vocabulary যুক্ত করা হয়নি।</p>
-  //       <h1 class="font-bold text-xl mt-10">নেক্সট Lesson এ যান</h1>
-  //     </div>
-  // `;
+  if (!words || words.length === 0) {
+    wordsContainer.innerHTML = `<div class="col-span-full place-self-center text-center">
+        <p class="text-center"><i class="fa-solid fa-triangle-exclamation text-2xl"></i></p>
+        <p class="font-hind-siliguri">এই Lesson এ এখনো কোন Vocabulary যুক্ত করা হয়নি।</p>
+        <h1 class="font-bold text-xl mt-10">নেক্সট Lesson এ যান</h1>
+      </div>
+  `;
 
-  //     return;
-  //   }
+    return;
+  }
   words.forEach((word) => {
     const wordCard = document.createElement("div");
     wordCard.innerHTML = `<div class="bg-[#ffffff] p-5 rounded-lg shadow-md text-center h-[230px]">
-                <h1 class="font-bold text-xl mb-5">${word.word}</h1>
+                <h1 class="font-bold text-xl mb-5">${word.word ? word.word : "শব্দ পাওয়া যায়নি"}</h1>
                 <p class="mb-5">Meaning / Pronunciation</p>
-                <p class="font-hind-siliguri">${word.meaning} / ${word.pronunciation}</p>
+                <p class="font-hind-siliguri">${word.meaning ? word.meaning : "অর্থ পাওয়া যায়নি"} / ${
+      word.pronunciation ? word.pronunciation : "উচ্চারণ পাওয়া যায়নি"
+    }</p>
                 <div class="flex items-center justify-between gap-5 mt-10 mx-5 text-xl">
                     <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
                       <i class="fa-solid fa-circle-info"></i>
